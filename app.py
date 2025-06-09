@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
@@ -27,7 +27,8 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    return '<h2>Welcome to QuickGST! <a href="/login">Login</a> or <a href="/register">Register</a></h2>'
+    return render_template('home.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -40,15 +41,8 @@ def register():
             users[email] = password
             flash("User registered successfully!")
             return redirect(url_for('login'))
-    return render_template_string('''
-        <h2>Register</h2>
-        <form method="post">
-            Email: <input type="text" name="email"><br>
-            Password: <input type="password" name="password"><br>
-            <input type="submit" value="Register">
-        </form>
-        <a href="/">Back</a>
-    ''')
+    return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -61,20 +55,14 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash("Invalid credentials")
-    return render_template_string('''
-        <h2>Login</h2>
-        <form method="post">
-            Email: <input type="text" name="email"><br>
-            Password: <input type="password" name="password"><br>
-            <input type="submit" value="Login">
-        </form>
-        <a href="/">Back</a>
-    ''')
+    return render_template('login.html')
+
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return f"<h2>Welcome, {current_user.id}!</h2><a href='/logout'>Logout</a>"
+    return render_template('dashboard.html')
+
 
 @app.route('/logout')
 @login_required
