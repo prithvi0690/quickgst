@@ -70,5 +70,28 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+from flask import request
+
+@app.route('/gst-calculator', methods=['GET', 'POST'])
+@login_required
+def gst_calculator():
+    gst_amount = None
+    total_amount = None
+    price = None
+    gst_rate = None
+
+    if request.method == 'POST':
+        try:
+            price = float(request.form['price'])
+            gst_rate = float(request.form['gst_rate'])
+            gst_amount = price * gst_rate / 100
+            total_amount = price + gst_amount
+        except ValueError:
+            gst_amount = None
+            total_amount = None
+
+    return render_template('gst_calculator.html', price=price, gst_rate=gst_rate, gst_amount=gst_amount, total_amount=total_amount)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
